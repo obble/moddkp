@@ -21,6 +21,11 @@
 
     -- print = function(m) DEFAULT_CHAT_FRAME:AddMessage(m) end
 
+    local sort = function(a, b)
+                -- show higher value first, or alphabetically within same priority
+        return a[2] > b[2] or a[2] == b[2] and a[1] < b[1]
+    end
+
     local fetch = function()
         local f = _G['moddkp_container']
         local max = 0
@@ -46,6 +51,7 @@
     local list = function()
         local f = _G['moddkp_body']
         local max, h, j = 0, 0, 1
+        table.sort(MODDKP_GUILDMEMBERS, sort)
         for i = 1, tlength(MODDKP_GUILDMEMBERS) do
             local info =  MODDKP_GUILDMEMBERS[i]
 
@@ -110,9 +116,9 @@
     end
 
     _G['moddkp_container']:SetScript('OnShow', function()
-        GuildRoster()   -- update info
-        fetch()
-        list()
+        GuildRoster()   -- update info from server
+        fetch()         -- create table
+        list()          -- build
     end)
     _G['Minimap_moddkp']:SetScript('OnClick', toggle)
 
