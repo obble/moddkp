@@ -77,38 +77,6 @@
     body:EnableMouse(true)
     body:EnableMouseWheel(true)
 
-    local h, j = 0, 1
-    for i = 1, GetNumGuildMembers() do
-        local name, _, _, _, class, _, publicnote, officernote, online = GetGuildRosterInfo(i)
-        local colour = RAID_CLASS_COLORS[string.upper(class)]
-
-        local bu = CreateFrame('Statusbar', 'moddkp_guild'..i, body)
-        bu:SetWidth(300) bu:SetHeight(18)
-        bu:SetStatusBarTexture(TEXTURE)
-        bu:SetMinMaxValues(0, 1)
-        bu:SetBackdrop(BACKDROP)
-        bu:SetBackdropColor(colour.r*.4, colour.g*.4, colour.b*.4, 1)
-        bu:SetValue(1)
-        bu:SetStatusBarColor(colour.r, colour.g, colour.b)
-
-        bu.name = bu:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-        bu.name:SetPoint('LEFT', bu, 5, 0)
-        bu.name:SetText(name)
-        bu.name:SetTextColor(colour.r, colour.g, colour.b)
-
-        bu.dkp = bu:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
-        bu.dkp:SetPoint('RIGHT', bu, -10, 0)
-
-        if i == 1 then
-            bu:SetPoint('TOP', body)
-        else
-            bu:SetPoint('TOPLEFT', _G['moddkp_guild'..(i - 1)], 'BOTTOMLEFT', 0, -4)
-        end
-
-        h = bu:GetHeight()
-        j = j + 1
-    end
-
     container.add = CreateFrame('Button', 'moddkp_add', container)
     container.add:SetHeight(15)
     container.add:SetPoint('BOTTOMLEFT', 15, 15)
@@ -136,8 +104,6 @@
     container.percentadd.text:SetPoint('CENTER', container.percentadd)
     container.percentadd.text:SetText'%'
     container.percentadd:SetWidth(container.percentadd.text:GetStringWidth())
-
-    body:SetHeight(h*j)
 
     scrollframe.content = body
     scrollframe:SetScrollChild(body)
