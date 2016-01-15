@@ -5,7 +5,7 @@
     local useOfficerNotes = false
     local TEXTURE = [[Interface\AddOns\modui\statusbar\texture\sb.tga]]
     local BACKDROP = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],}
-    MODDKP_GUILDMEMBERS = {}
+    MODDKP_GUILDMEMBERS = {}    MODDKP_GUILDMEMBERS_SHOWN = {}
 
     -- data for use after use:
     -- array: [1] = name, [2] = dkp value, [3] = class, [4] = guildnote, [5] = isonline
@@ -48,34 +48,85 @@
         end
     end
 
-    local list = function()
-        local f = _G['moddkp_body']
-        local max, h, j = 0, 0, 1
-        table.sort(MODDKP_GUILDMEMBERS, sort)
+    local form = function(f)
         for i = 1, tlength(MODDKP_GUILDMEMBERS) do
-            local info =  MODDKP_GUILDMEMBERS[i]
-
-            if info[2] > max then max = info[2] end
-
-            if not _G['moddkp_unit'..j] then
-                local colour = RAID_CLASS_COLORS[string.upper(info[3])]
-
-                local bu = CreateFrame('Statusbar', 'moddkp_unit'..j, f)
+            if not _G['moddkp_unit'..i] then
+                local bu = CreateFrame('Statusbar', 'moddkp_unit'..i, f)
                 bu:SetWidth(300) bu:SetHeight(18)
                 bu:SetStatusBarTexture(TEXTURE)
-                bu:SetMinMaxValues(0, max)
+                bu:SetMinMaxValues(0, 1)
                 bu:SetBackdrop(BACKDROP)
-                bu:SetBackdropColor(colour.r*.4, colour.g*.4, colour.b*.4, 1)
-                bu:SetValue(info[2])
-                bu:SetStatusBarColor(colour.r, colour.g, colour.b)
 
                 bu.name = bu:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
                 bu.name:SetPoint('LEFT', bu, 5, 0)
-                bu.name:SetText(info[1])
-                bu.name:SetTextColor(colour.r, colour.g, colour.b)
 
                 bu.dkp = bu:CreateFontString(nil, 'OVERLAY', 'GameFontNormalSmall')
                 bu.dkp:SetPoint('RIGHT', bu, -10, 0)
+            end
+        end
+    end
+
+    local list_RAID = function()
+        MODDKP_GUILDMEMBERS_SHOWN = {}
+        for i = 1, tlength(MODDKP_GUILDMEMBERS) do
+            local info = MODDKP_GUILDMEMBERS[i]
+            for j = 1, GetNumRaidMembers() do
+                local name, _, _, _, class = GetRaidRosterInfo(j)
+                if name == info[1] then
+                    MODDKP_GUILDMEMBERS_SHOWN[j] = {info[1], info[2], info[3], info[4], info[5]}
+                end
+            end
+        end
+    end
+
+    local list_CLASS = function(title)
+        MODDKP_GUILDMEMBERS_SHOWN = {}
+        local index = 1
+        for i = 1, tlength(MODDKP_GUILDMEMBERS) do
+            local info = MODDKP_GUILDMEMBERS[i]
+            if info[3] == title.text:GetText() then
+                MODDKP_GUILDMEMBERS_SHOWN[index] = {info[1], info[2], info[3], info[4], info[5]}
+                index = index + 1
+            end
+        end
+    end
+
+    local list = function(title)
+        local f  = _G['moddkp_body']
+        local sf = _G['moddkp_scrollframe']
+        local max, h, j = 0, 0, 1
+
+        if f.raid then list_RAID()
+        elseif f.class then list_CLASS(title)
+        else MODDKP_GUILDMEMBERS_SHOWN = MODDKP_GUILDMEMBERS end
+
+        table.sort(MODDKP_GUILDMEMBERS_SHOWN, sort)
+
+        for i = 1, tlength(MODDKP_GUILDMEMBERS) do
+            local bu = _G['moddkp_unit'..i]
+            if bu then bu:Hide() end
+        end
+
+        form(f)
+
+        for i = 1, tlength(MODDKP_GUILDMEMBERS_SHOWN) do
+            local info = MODDKP_GUILDMEMBERS_SHOWN[i]
+
+            if info[2] then
+                local bu = _G['moddkp_unit'..i]
+                local colour = RAID_CLASS_COLORS[string.upper(info[3])]
+
+                if info[2] > max then max = info[2] end
+
+                bu:SetMinMaxValues(0, max)
+                bu:SetBackdropColor(colour.r*.4, colour.g*.4, colour.b*.4, 1)
+                bu:SetValue(info[2])
+                bu:SetStatusBarColor(colour.r, colour.g, colour.b)
+                bu:Show()
+
+                bu.name:SetText(info[1])
+                bu.name:SetTextColor(colour.r, colour.g, colour.b)
+
                 bu.dkp:SetText(info[2]..' dkp')
 
                 if i == 1 then
@@ -89,26 +140,9 @@
             end
         end
         f:SetHeight(h*j)
+        sf.content = f
+        sf:SetScrollChild(f)
     end
-
-    --[[local arrangeby_HIGHEST = function()
-        for i = 1, tlength(guild) do
-            local hierarchy = {}
-            print(i)
-        end
-    end ]]
-
-    --[[ local list_RAID = function()
-        for i = 1, GetNumRaidMembers() do
-            local name, _, _, _, class = GetRaidRosterInfo(i)
-            for j = 1, GetNumGuildMembers() do
-                local info = MODDKP_GUILDMEMBERS[j]
-                if name == info[1] then
-                    local dkp = info[2]
-                end
-            end
-        end
-    end ]]
 
     local toggle = function()
         local f = _G['moddkp_container']
@@ -116,11 +150,39 @@
     end
 
     _G['moddkp_container']:SetScript('OnShow', function()
+        _G['moddkp_body'].raid = false
+        _G['moddkp_body'].class = false
         GuildRoster()   -- update info from server
         fetch()         -- create table
         list()          -- build
     end)
     _G['Minimap_moddkp']:SetScript('OnClick', toggle)
+
+    _G['moddkp_guild']:SetScript('OnClick', function()
+        _G['moddkp_body'].raid = false
+        _G['moddkp_body'].class = false
+        GuildRoster()
+        fetch()
+        list()
+    end)
+
+    _G['moddkp_raid']:SetScript('OnClick', function()
+        _G['moddkp_body'].raid = true
+        _G['moddkp_body'].class = false
+        GuildRoster()
+        fetch()
+        list()
+    end)
+
+    for i = 1, 8 do
+        _G['moddkp_class'..i]:SetScript('OnClick', function()
+            _G['moddkp_body'].raid = false
+            _G['moddkp_body'].class = true
+            GuildRoster()
+            fetch()
+            list(this)
+        end)
+    end
 
     SLASH_MODDKP1 = '/moddkp'
     SlashCmdList['MODDKP'] = function(msg)

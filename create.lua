@@ -28,6 +28,7 @@
     container.raid = CreateFrame('Button', 'moddkp_raid', container)
     container.raid:SetWidth(100) container.raid:SetHeight(15)
     container.raid:SetPoint('TOPLEFT', container.guild, 'TOPRIGHT', 30, 0)
+    container.raid:SetScript('OnClick', function() container.raid = true end)
 
     container.raid.text = container.raid:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     container.raid.text:SetPoint('CENTER', container.raid)
