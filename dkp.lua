@@ -7,6 +7,12 @@
     local BACKDROP = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],}
     MODDKP_GUILDMEMBERS = {}    MODDKP_GUILDMEMBERS_SHOWN = {}
 
+    local tlength = function(t)
+        local count = 0
+        for _ in pairs(t) do count = count + 1 end
+        return count
+    end
+
     -- data for use after use:
     -- array: [1] = name, [2] = dkp value, [3] = class, [4] = guildnote, [5] = isonline
 
