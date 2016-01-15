@@ -118,7 +118,7 @@
         for i = 1, tlength(MODDKP_GUILDMEMBERS_SHOWN) do
             local info = MODDKP_GUILDMEMBERS_SHOWN[i]
 
-            if info[2] then
+            if info and info[2] then
                 local bu = _G['moddkp_unit'..i]
                 local colour = RAID_CLASS_COLORS[string.upper(info[3])]
 
