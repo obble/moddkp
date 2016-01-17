@@ -78,7 +78,7 @@
 
     for i = 1, 4 do
         local class = i == 1 and 'Cloth' or i == 2 and 'Leather' or i == 3 and 'Mail' or 'Plate'
-        local colour = {r = .4*i, g = .7*i, b = .2*i}
+        local colour = {r = .7/i, g = .1*i, b = .5*i}
 
         container.armour = CreateFrame('Button', 'moddkp_armour'..i, container)
         container.armour:SetHeight(15)
