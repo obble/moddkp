@@ -126,8 +126,9 @@
     end
 
     local list = function(title)
-        local f  = _G['moddkp_body']
-        local sf = _G['moddkp_scrollframe']
+        local f         = _G['moddkp_body']
+        local container = _G['moddkp_container']
+        local sf        = _G['moddkp_scrollframe']
         local max, h, j = 0, 0, 1
 
         if f.raid then list_RAID()
@@ -163,6 +164,7 @@
                 bu.name:SetTextColor(colour.r, colour.g, colour.b)
 
                 bu.dkp:SetText(info[2]..' dkp')
+                if info[1] == 'Velkan' or info[1] == 'Stumpgrinder' then bu.dkp:SetText(info[2]..' dkp & |cff6c6c6c10 coal|r') end
 
                 if i == 1 then
                     bu:SetPoint('TOP', f)
@@ -174,6 +176,7 @@
                 j = j + 1
             end
         end
+        container.title:SetText(GetGuildInfo'player'..'\'s DKP')
         f:SetHeight(h*j)
         sf.content = f
         sf:SetScrollChild(f)

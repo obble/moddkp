@@ -17,7 +17,6 @@
 
     container.title = container:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     container.title:SetPoint('TOP', container, 0, -12)
-    container.title:SetText(GetGuildInfo'player'..'\'s DKP')
 
     container.guild = CreateFrame('Button', 'moddkp_guild', container)
     container.guild:SetHeight(15)
@@ -85,10 +84,6 @@
 
         if i == 1 then
             container.armour:SetPoint('TOPLEFT', _G['moddkp_class4'], 'BOTTOMLEFT', 1, -12)
-        elseif i == 2 then
-            container.armour:SetPoint('TOPLEFT', _G['moddkp_armour'..(i - 1)], 'TOPRIGHT', 51, 0)
-        elseif i == 3 then
-            container.armour:SetPoint('TOPLEFT', _G['moddkp_armour'..(i - 1)], 'TOPRIGHT', 51, 0)
         else
             container.armour:SetPoint('TOPLEFT', _G['moddkp_armour'..(i - 1)], 'TOPRIGHT', 51, 0)
         end
