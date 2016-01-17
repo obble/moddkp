@@ -176,7 +176,7 @@
                 j = j + 1
             end
         end
-        container.title:SetText(GetGuildInfo'player'..'\'s DKP')
+        container.title:SetText(GetGuildInfo'player' and GetGuildInfo'player'..'\'s DKP' or 'DKP')
         f:SetHeight(h*j)
         sf.content = f
         sf:SetScrollChild(f)

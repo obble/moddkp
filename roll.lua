@@ -16,7 +16,8 @@
         if name then
             for i = 1, tlength(MODDKP_GUILDMEMBERS) do
                 local info = MODDKP_GUILDMEMBERS[i]
-                if string.find(name, info[1]) then
+                if  string.find(name, info[1])
+                and string.len(name) == string.len(info[1]) then    -- anti crei/creidd check
                     t = gsub(t, '^(.+) rolls (%d+) %((%d+)%-(%d+)%)$', t..' — '..info[3]..' with '..info[2]..'dkp')
                 end
             end
