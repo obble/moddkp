@@ -5,7 +5,7 @@
     local BACKDROP = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],}
 
     local container = CreateFrame('Frame', 'moddkp_container', UIParent)
-    container:SetWidth(345) container:SetHeight(380)
+    container:SetWidth(345) container:SetHeight(440)
     container:SetPoint('TOP', UIParent, 0, -20)
     container:SetBackdrop(BACKDROP)
     container:SetBackdropColor(0, 0, 0, 1)
@@ -15,15 +15,21 @@
     container:SetScript('OnDragStop', function() container:StopMovingOrSizing() end)
     container:Hide()
 
+    container.title = container:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
+    container.title:SetPoint('TOP', container, 0, -10)
+    container.title:SetText(GetGuildInfo'player'..'\'s DKP')
+
     container.guild = CreateFrame('Button', 'moddkp_guild', container)
     container.guild:SetHeight(15)
-    container.guild:SetPoint('TOPLEFT', 22, -10)
+    container.guild:SetPoint('TOPLEFT', 22, -30)
 
     container.guild.text = container.guild:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     container.guild.text:SetPoint('CENTER', container.guild)
     container.guild.text:SetText'Guild'
     container.guild.text:SetTextColor(64/255, 251/255, 64/255)
     container.guild:SetWidth(container.guild.text:GetStringWidth())
+    container.guild:SetScript('OnEnter', function() this.text:SetTextColor(.7, .4, .4) end)
+    container.guild:SetScript('OnLeave', function() this.text:SetTextColor(64/255, 251/255, 64/255) end)
 
     container.raid = CreateFrame('Button', 'moddkp_raid', container)
     container.raid:SetWidth(100) container.raid:SetHeight(15)
@@ -35,6 +41,8 @@
     container.raid.text:SetText'Raid'
     container.raid.text:SetTextColor(255/255, 125/255, 0)
     container.raid:SetWidth(container.raid.text:GetStringWidth())
+    container.raid:SetScript('OnEnter', function() this.text:SetTextColor(.7, .4, .4) end)
+    container.raid:SetScript('OnLeave', function() this.text:SetTextColor(255/255, 125/255, 0) end)
 
     for i = 1, 8 do
         local class = i == 1 and 'Druid' or i == 2 and 'Hunter' or i == 3 and 'Mage' or i == 4 and 'Paladin' or i == 5 and 'Priest' or i == 6 and 'Rogue' or i == 7 and 'Warlock' or 'Warrior'
@@ -64,11 +72,13 @@
         container.class.text:SetText(class)
         container.class.text:SetTextColor(colour.r, colour.g, colour.b)
         container.class:SetWidth(container.class.text:GetStringWidth())
+        container.class:SetScript('OnEnter', function() this.text:SetTextColor(.7, .4, .4) end)
+        container.class:SetScript('OnLeave', function() this.text:SetTextColor(colour.r, colour.g, colour.b) end)
     end
 
     local scrollframe = CreateFrame('ScrollFrame', 'moddkp_scrollframe', container, 'UIPanelScrollFrameTemplate')
     scrollframe:SetFrameLevel(3)
-    scrollframe:SetPoint('TOPLEFT', container, 16, -50)
+    scrollframe:SetPoint('TOPLEFT', container, 16, -75)
     scrollframe:SetPoint('BOTTOMRIGHT', container, -32, 36)
     scrollframe:Raise()
     scrollframe:SetToplevel()
@@ -81,29 +91,35 @@
     container.add = CreateFrame('Button', 'moddkp_add', container)
     container.add:SetHeight(15)
     container.add:SetPoint('BOTTOMLEFT', 15, 15)
+    container.add:Disable()                             -- temp
 
     container.add.text = container.add:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
     container.add.text:SetPoint('CENTER', container.add)
     container.add.text:SetText'+'
+    container.add.text:SetTextColor(.7, .7, .7)         -- temp
     container.add:SetWidth(container.add.text:GetStringWidth())
 
     container.subtract = CreateFrame('Button', 'moddkp_subtract', container)
     container.subtract:SetHeight(15)
     container.subtract:SetPoint('LEFT', container.add, 'RIGHT', 15, 0)
+    container.subtract:Disable()                        -- temp
 
     container.subtract.text = container.subtract:CreateFontString(nil, 'OVERLAY', 'GameFontNormalLarge')
     container.subtract.text:SetPoint('CENTER', container.subtract)
     container.subtract.text:SetText'-'
+    container.subtract.text:SetTextColor(.7, .7, .7)    -- temp
     container.subtract:SetWidth(container.subtract.text:GetStringWidth())
 
     container.percentadd = CreateFrame('Button', 'moddkp_percentadd', container)
     container.percentadd:SetHeight(15)
     container.percentadd:SetPoint('LEFT', container.subtract, 'RIGHT', 15, -1)
+    container.percentadd:Disable()                      -- temp
 
     container.percentadd.text = container.percentadd:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     container.percentadd.text:SetFont(STANDARD_TEXT_FONT, 13)
     container.percentadd.text:SetPoint('CENTER', container.percentadd)
     container.percentadd.text:SetText'%'
+    container.percentadd.text:SetTextColor(.7, .7, .7)  -- temp
     container.percentadd:SetWidth(container.percentadd.text:GetStringWidth())
 
     scrollframe.content = body

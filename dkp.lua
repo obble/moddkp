@@ -24,6 +24,7 @@
         -- alphabetical
         -- guild rank
     -- search ?
+    -- move dropdown functions to bottom of menu
 
     -- print = function(m) DEFAULT_CHAT_FRAME:AddMessage(m) end
 
@@ -35,8 +36,9 @@
     local fetch = function()
         local f = _G['moddkp_container']
         local max = 0
+        local r = SetGuildRosterShowOffline()
         MODDKP_GUILDMEMBERS = {}                                     -- wipe
-        SetGuildRosterShowOffline(true)
+        if f == false then SetGuildRosterShowOffline(true) end
         local total, online_max, online = GetNumGuildMembers()
         for i = 1, total do
             local note, v
@@ -52,6 +54,7 @@
             MODDKP_GUILDMEMBERS[i] = {name, v, class, note, online} -- iteration will always be based on position in guild ranking
                                                                     -- to-do: acclimatise for guild members joining/leaving
         end
+        SetGuildRosterShowOffline(r)
     end
 
     local form = function(f)
@@ -189,6 +192,10 @@
             list(this)
         end)
     end
+
+    local f = CreateFrame'Frame'
+    f:RegisterEvent'PLAYER_ENTERING_WORLD'
+    f:SetScript('OnEvent', function() GuildRoster() fetch() f:UnregisterAllEvents() end)
 
     SLASH_MODDKP1 = '/moddkp'
     SlashCmdList['MODDKP'] = function(msg)

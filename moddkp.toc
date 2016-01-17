@@ -5,3 +5,4 @@
 button.lua
 create.lua
 dkp.lua
+roll.lua
