@@ -239,8 +239,8 @@
     end
 
     local f = CreateFrame'Frame'
-    f:RegisterEvent'PLAYER_ENTERING_WORLD'
-    f:SetScript('OnEvent', function() GuildRoster() fetch() f:UnregisterAllEvents() end)
+    f:RegisterEvent'PLAYER_ENTERING_WORLD' f:RegisterEvent'CHAT_MSG_RAID_WARNING'
+    f:SetScript('OnEvent', function() GuildRoster() fetch() f:UnregisterEvent'PLAYER_ENTERING_WORLD' end)
 
     SLASH_MODDKP1 = '/moddkp'
     SlashCmdList['MODDKP'] = function(msg)
