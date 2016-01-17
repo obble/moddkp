@@ -7,6 +7,13 @@
     local BACKDROP = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],}
     MODDKP_GUILDMEMBERS = {}    MODDKP_GUILDMEMBERS_SHOWN = {}
 
+    local armour = {
+        ['Cloth']   = {'Mage', 'Priest', 'Warlock'},
+        ['Leather'] = {'Druid', 'Rogue'},
+        ['Mail']    = {'Hunter', 'Shaman'},
+        ['Plate']   = {'Paladin', 'Warrior'},
+    }
+
     local tlength = function(t)
         local count = 0
         for _ in pairs(t) do count = count + 1 end
@@ -100,6 +107,24 @@
         end
     end
 
+    local list_ARMOUR = function(title)
+        MODDKP_GUILDMEMBERS_SHOWN = {}
+        local index = 1
+        for i = 1, tlength(MODDKP_GUILDMEMBERS) do
+            local info = MODDKP_GUILDMEMBERS[i]
+            for k, v in pairs(armour) do
+                if k == title.text:GetText() then
+                    for _, j in pairs(v) do
+                        if info[3] == j then
+                            MODDKP_GUILDMEMBERS_SHOWN[index] = {info[1], info[2], info[3], info[4], info[5]}
+                            index = index + 1
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     local list = function(title)
         local f  = _G['moddkp_body']
         local sf = _G['moddkp_scrollframe']
@@ -107,6 +132,7 @@
 
         if f.raid then list_RAID()
         elseif f.class then list_CLASS(title)
+        elseif f.armour then list_ARMOUR(title)
         else MODDKP_GUILDMEMBERS_SHOWN = MODDKP_GUILDMEMBERS end
 
         table.sort(MODDKP_GUILDMEMBERS_SHOWN, sort)
@@ -159,8 +185,9 @@
     end
 
     _G['moddkp_container']:SetScript('OnShow', function()
-        _G['moddkp_body'].raid = false
-        _G['moddkp_body'].class = false
+        _G['moddkp_body'].raid   = false
+        _G['moddkp_body'].class  = false
+        _G['moddkp_body'].armour = false
         GuildRoster()   -- update info from server
         fetch()         -- create table
         list()          -- build
@@ -168,16 +195,18 @@
     _G['Minimap_moddkp']:SetScript('OnClick', toggle)
 
     _G['moddkp_guild']:SetScript('OnClick', function()
-        _G['moddkp_body'].raid = false
-        _G['moddkp_body'].class = false
+        _G['moddkp_body'].raid   = false
+        _G['moddkp_body'].class  = false
+        _G['moddkp_body'].armour = false
         GuildRoster()
         fetch()
         list()
     end)
 
     _G['moddkp_raid']:SetScript('OnClick', function()
-        _G['moddkp_body'].raid = true
-        _G['moddkp_body'].class = false
+        _G['moddkp_body'].raid   = true
+        _G['moddkp_body'].class  = false
+        _G['moddkp_body'].armour = false
         GuildRoster()
         fetch()
         list()
@@ -185,8 +214,21 @@
 
     for i = 1, 8 do
         _G['moddkp_class'..i]:SetScript('OnClick', function()
-            _G['moddkp_body'].raid = false
-            _G['moddkp_body'].class = true
+            _G['moddkp_body'].raid   = false
+            _G['moddkp_body'].class  = true
+            _G['moddkp_body'].armour = false
+            GuildRoster()
+            fetch()
+            list(this)
+        end)
+    end
+
+    for i = 1, 4 do
+        _G['moddkp_armour'..i]:SetScript('OnClick', function()
+            _G['moddkp_body'].raid   = false
+            _G['moddkp_body'].class  = false
+            _G['moddkp_body'].armour = true
+            this.index = i
             GuildRoster()
             fetch()
             list(this)

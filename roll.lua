@@ -4,6 +4,12 @@
     local ____AddMessage = ChatFrame1.AddMessage
     local blacklist = {[ChatFrame2] = true,}
 
+    local tlength = function(t)
+        local count = 0
+        for _ in pairs(t) do count = count + 1 end
+        return count
+    end
+
     local AddMessage = function(f, t, r, g, b, id)
         if t == nil then return ____AddMessage(f, t, r, g, b, id) end
         local name = gsub(t, '^(.+) rolls (%d+) %((%d+)%-(%d+)%)$', '%1')

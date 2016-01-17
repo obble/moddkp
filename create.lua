@@ -5,7 +5,7 @@
     local BACKDROP = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],}
 
     local container = CreateFrame('Frame', 'moddkp_container', UIParent)
-    container:SetWidth(345) container:SetHeight(440)
+    container:SetWidth(345) container:SetHeight(480)
     container:SetPoint('TOP', UIParent, 0, -20)
     container:SetBackdrop(BACKDROP)
     container:SetBackdropColor(0, 0, 0, 1)
@@ -16,12 +16,12 @@
     container:Hide()
 
     container.title = container:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
-    container.title:SetPoint('TOP', container, 0, -10)
+    container.title:SetPoint('TOP', container, 0, -12)
     container.title:SetText(GetGuildInfo'player'..'\'s DKP')
 
     container.guild = CreateFrame('Button', 'moddkp_guild', container)
     container.guild:SetHeight(15)
-    container.guild:SetPoint('TOPLEFT', 22, -30)
+    container.guild:SetPoint('TOPLEFT', 22, -40)
 
     container.guild.text = container.guild:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     container.guild.text:SetPoint('CENTER', container.guild)
@@ -54,7 +54,7 @@
         if i == 1 then
             container.class:SetPoint('TOPLEFT', container.raid, 'TOPRIGHT', 30, 0)
         elseif i == 4 then
-            container.class:SetPoint('TOPLEFT', container.guild, 'BOTTOMLEFT', 0, -2)
+            container.class:SetPoint('TOPLEFT', container.guild, 'BOTTOMLEFT', 0, -4)
         elseif i == 5 then
             container.class:SetPoint('TOPLEFT', _G['moddkp_class'..(i - 1)], 'TOPRIGHT', 19, 0)
         elseif i == 6 then
@@ -76,9 +76,35 @@
         container.class:SetScript('OnLeave', function() this.text:SetTextColor(colour.r, colour.g, colour.b) end)
     end
 
+    for i = 1, 4 do
+        local class = i == 1 and 'Cloth' or i == 2 and 'Leather' or i == 3 and 'Mail' or 'Plate'
+        local colour = {r = .4*i, g = .7*i, b = .2*i}
+
+        container.armour = CreateFrame('Button', 'moddkp_armour'..i, container)
+        container.armour:SetHeight(15)
+
+        if i == 1 then
+            container.armour:SetPoint('TOPLEFT', _G['moddkp_class4'], 'BOTTOMLEFT', 1, -12)
+        elseif i == 2 then
+            container.armour:SetPoint('TOPLEFT', _G['moddkp_armour'..(i - 1)], 'TOPRIGHT', 51, 0)
+        elseif i == 3 then
+            container.armour:SetPoint('TOPLEFT', _G['moddkp_armour'..(i - 1)], 'TOPRIGHT', 51, 0)
+        else
+            container.armour:SetPoint('TOPLEFT', _G['moddkp_armour'..(i - 1)], 'TOPRIGHT', 51, 0)
+        end
+
+        container.armour.text = container.armour:CreateFontString('moddkp_armour'..i..'text', 'OVERLAY', 'GameFontNormal')
+        container.armour.text:SetPoint('CENTER',container.armour)
+        container.armour.text:SetText(class)
+        container.armour.text:SetTextColor(colour.r, colour.g, colour.b)
+        container.armour:SetWidth(container.armour.text:GetStringWidth())
+        container.armour:SetScript('OnEnter', function() this.text:SetTextColor(.7, .4, .4) end)
+        container.armour:SetScript('OnLeave', function() this.text:SetTextColor(colour.r, colour.g, colour.b) end)
+    end
+
     local scrollframe = CreateFrame('ScrollFrame', 'moddkp_scrollframe', container, 'UIPanelScrollFrameTemplate')
     scrollframe:SetFrameLevel(3)
-    scrollframe:SetPoint('TOPLEFT', container, 16, -75)
+    scrollframe:SetPoint('TOPLEFT', container, 16, -115)
     scrollframe:SetPoint('BOTTOMRIGHT', container, -32, 36)
     scrollframe:Raise()
     scrollframe:SetToplevel()
