@@ -1,4 +1,5 @@
 
+
     local _G = getfenv(0)
 
     local TEXTURE = [[Interface\AddOns\modui\statusbar\texture\sb.tga]]
@@ -14,6 +15,10 @@
     container:SetScript('OnDragStart', function() container:StartMoving() end)
     container:SetScript('OnDragStop', function() container:StopMovingOrSizing() end)
     container:Hide()
+
+    container.x = CreateFrame('Button', 'moddkp_CloseButton', container, 'UIPanelCloseButton')
+    container.x:SetPoint('TOPRIGHT', -3, -3)
+    container.x:SetScript('OnClick', function() container:Hide() end)
 
     container.title = container:CreateFontString(nil, 'OVERLAY', 'GameFontNormal')
     container.title:SetPoint('TOP', container, 0, -12)
