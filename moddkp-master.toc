@@ -1,0 +1,8 @@
+## Interface: 11200
+## Author: modernist
+## Title: mod dkp
+## Notes: window view & command controls for guilds using GuildDKP.
+button.lua
+create.lua
+dkp.lua
+roll.lua
