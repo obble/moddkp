@@ -45,7 +45,7 @@
         local max = 0
         local r = GetGuildRosterShowOffline()
         MODDKP_GUILDMEMBERS = {}                                     -- wipe
-        if f == false then SetGuildRosterShowOffline(true) end
+        SetGuildRosterShowOffline(true)
         local total, online_max, online = GetNumGuildMembers()
         for i = 1, total do
             local note, v
