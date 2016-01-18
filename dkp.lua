@@ -43,7 +43,7 @@
     local fetch = function()
         local f = _G['moddkp_container']
         local max = 0
-        local r = SetGuildRosterShowOffline()
+        local r = GetGuildRosterShowOffline()
         MODDKP_GUILDMEMBERS = {}                                     -- wipe
         if f == false then SetGuildRosterShowOffline(true) end
         local total, online_max, online = GetNumGuildMembers()
