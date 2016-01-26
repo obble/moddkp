@@ -1,7 +1,7 @@
 
 
     local _G = getfenv(0)
-
+    local f = CreateFrame'Frame'
     local useOfficerNotes = false
     local TEXTURE = [[Interface\AddOns\modui\statusbar\texture\sb.tga]]
     local BACKDROP = {bgFile = [[Interface\Tooltips\UI-Tooltip-Background]],}
@@ -188,39 +188,51 @@
     end
 
     _G['moddkp_container']:SetScript('OnShow', function()
+        local t = GetTime() + 3
         _G['moddkp_body'].raid   = false
         _G['moddkp_body'].class  = false
         _G['moddkp_body'].armour = false
-        GuildRoster()   -- update info from server
+        f:SetScript('OnUpdate', function()
+            if GetTime() > t then GuildRoster() f:SetScript('OnUpdate', nil) end
+        end)            -- update info from server
         fetch()         -- create table
         list()          -- build
     end)
     _G['Minimap_moddkp']:SetScript('OnClick', toggle)
 
     _G['moddkp_guild']:SetScript('OnClick', function()
+        local t = GetTime() + 3
         _G['moddkp_body'].raid   = false
         _G['moddkp_body'].class  = false
         _G['moddkp_body'].armour = false
-        GuildRoster()
+        f:SetScript('OnUpdate', function()
+            if GetTime() > t then GuildRoster() f:SetScript('OnUpdate', nil) end
+        end)
         fetch()
         list()
     end)
 
     _G['moddkp_raid']:SetScript('OnClick', function()
+        local t = GetTime() + 3
         _G['moddkp_body'].raid   = true
         _G['moddkp_body'].class  = false
         _G['moddkp_body'].armour = false
-        GuildRoster()
+        f:SetScript('OnUpdate', function()
+            if GetTime() > t then GuildRoster() f:SetScript('OnUpdate', nil) end
+        end)
         fetch()
         list()
     end)
 
     for i = 1, 8 do
         _G['moddkp_class'..i]:SetScript('OnClick', function()
+            local t = GetTime() + 3
             _G['moddkp_body'].raid   = false
             _G['moddkp_body'].class  = true
             _G['moddkp_body'].armour = false
-            GuildRoster()
+            f:SetScript('OnUpdate', function()
+                if GetTime() > t then GuildRoster() f:SetScript('OnUpdate', nil) end
+            end)
             fetch()
             list(this)
         end)
@@ -228,19 +240,28 @@
 
     for i = 1, 4 do
         _G['moddkp_armour'..i]:SetScript('OnClick', function()
+            local t = GetTime() + 3
             _G['moddkp_body'].raid   = false
             _G['moddkp_body'].class  = false
             _G['moddkp_body'].armour = true
             this.index = i
-            GuildRoster()
+            f:SetScript('OnUpdate', function()
+                if GetTime() > t then GuildRoster() f:SetScript('OnUpdate', nil) end
+            end)
             fetch()
             list(this)
         end)
     end
 
-    local f = CreateFrame'Frame'
     f:RegisterEvent'PLAYER_ENTERING_WORLD' f:RegisterEvent'CHAT_MSG_RAID_WARNING'
-    f:SetScript('OnEvent', function() GuildRoster() fetch() f:UnregisterEvent'PLAYER_ENTERING_WORLD' end)
+    f:SetScript('OnEvent', function()
+        local t = GetTime() + 3
+        f:SetScript('OnUpdate', function()
+            if GetTime() > t then GuildRoster() f:SetScript('OnUpdate', nil) end
+        end)
+        fetch()
+        f:UnregisterEvent'PLAYER_ENTERING_WORLD'
+    end)
 
     SLASH_MODDKP1 = '/moddkp'
     SlashCmdList['MODDKP'] = function(msg)
