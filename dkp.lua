@@ -36,7 +36,7 @@
     -- print = function(m) DEFAULT_CHAT_FRAME:AddMessage(m) end
 
     local sort = function(a, b)
-                -- show higher value first, or alphabetically within same priority
+            -- show higher value first, or alphabetically within same priority
         return a[2] > b[2] or a[2] == b[2] and a[1] < b[1]
     end
 
@@ -182,6 +182,30 @@
         sf:SetScrollChild(f)
     end
 
+    local halfDKP = function()
+        for i = 1, tlength(MODDKP_GUILDMEMBERS) do
+            local info = MODDKP_GUILDMEMBERS[i]
+            if info and info[1] and info[2] and info[2] ~= 0 then
+                local note
+                local name, _, _, _, _, _, publicnote, officernote = GetGuildRosterInfo(i)
+                local dkp = math.ceil(tonumber(info[2])/2) -- value is halved
+
+                if useOfficerNotes then note = officernote else note = publicnote end
+                local _, _, v = string.find(note, '<(-?%d*)>')
+
+
+                if v then
+                    note = gsub(note, '<(-?%d*)>', '<'..dkp..'>')
+                    if useOfficerNotes then
+        				GuildRosterSetOfficerNote(i, note)
+        			else
+        				GuildRosterSetPublicNote(i, note)
+        			end
+                end
+            end
+        end
+    end
+
     local toggle = function()
         local f = _G['moddkp_container']
         if f:IsShown() then f:Hide() else f:Show() end
@@ -263,9 +287,28 @@
         f:UnregisterEvent'PLAYER_ENTERING_WORLD'
     end)
 
+    StaticPopupDialogs['MODDKP_HALVE'] = {
+    	text = '|cffd58200KITTY NOOOOOOOOOO!|r Are you sure you want to halve everybody in the guild\'s DKP? This is will be a permenant change.',
+    	button1 = TEXT(ACCEPT),
+    	button2 = TEXT(CANCEL),
+    	OnAccept = function()
+            halfDKP()
+        end,
+    	timeout = 0,
+    	hideOnEscape = 1
+    }
+
     SLASH_MODDKP1 = '/moddkp'
     SlashCmdList['MODDKP'] = function(msg)
-        toggle()
+        if msg == 'half' then
+            if IsAddOnLoaded'GuildDKP' then
+                StaticPopup_Show'MODDKP_HALVE'
+            else
+                print'moddkp: you do not have GuildDKP installed.'
+            end
+        else
+            toggle()
+        end
     end
 
 
