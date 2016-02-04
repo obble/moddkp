@@ -183,27 +183,30 @@
     end
 
     local halfDKP = function()
-        for i = 1, tlength(MODDKP_GUILDMEMBERS) do
-            local info = MODDKP_GUILDMEMBERS[i]
-            if info and info[1] and info[2] and info[2] ~= 0 then
-                local note
-                local name, _, _, _, _, _, publicnote, officernote = GetGuildRosterInfo(i)
-                local dkp = math.ceil(tonumber(info[2])/2) -- value is halved
+        local r = GetGuildRosterShowOffline()
+        SetGuildRosterShowOffline(true)
+        local total, online_max, online = GetNumGuildMembers()
+        for i = 1, total do
+            local note
+            local name, rank, _, _, _, _, publicnote, officernote = GetGuildRosterInfo(i)
 
-                if useOfficerNotes then note = officernote else note = publicnote end
-                local _, _, v = string.find(note, '<(-?%d*)>')
+            if useOfficerNotes then note = officernote else note = publicnote end
+            local _, _, v = string.find(note, '<(-?%d*)>')
 
+            local dkp = v
 
-                if v then
-                    note = gsub(note, '<(-?%d*)>', '<'..dkp..'>')
-                    if useOfficerNotes then
-        				GuildRosterSetOfficerNote(i, note)
-        			else
-        				GuildRosterSetPublicNote(i, note)
-        			end
-                end
+            if v then
+                v = math.ceil(tonumber(v)/2)
+                note = gsub(note, '<(-?%d*)>', '<'..v..'>')
+                print(i..'     '..name..'   '..rank..'   '..dkp..'  >  '..v)
+                if useOfficerNotes then
+        			GuildRosterSetOfficerNote(i, note)
+        		else
+        			GuildRosterSetPublicNote(i, note)
+        		end
             end
         end
+        SetGuildRosterShowOffline(r)
     end
 
     local toggle = function()
